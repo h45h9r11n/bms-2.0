@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trang Index - Danh Sách Sách</title>
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<section>
+    <header>
+        <h1>Chào mừng, [Tên người dùng]</h1>
+    </header>
+
+    <main>
+        <section id="search">
+            <h2><ion-icon name="search-outline"></ion-icon> Tìm Kiếm Sách</h2>
+            <div class="inputbox">
+                <ion-icon name="search-outline"></ion-icon>
+                <input type="text" id="search-input" placeholder="Nhập tên sách...">
+                <label for="search-input">Tìm Kiếm</label>
+            </div>
+        </section>
+
+        <section id="books">
+            <h2><ion-icon name="book-outline"></ion-icon> Danh Sách Sách</h2>
+            <div class="book-list">
+                <div class="book-item">
+                    <h3>Sách 1</h3>
+                    <p>Tác giả: Tác giả 1</p>
+                </div>
+                <div class="book-item">
+                    <h3>Sách 2</h3>
+                    <p>Tác giả: Tác giả 2</p>
+                </div>
+                <!-- Thêm các sách khác ở đây -->
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="register">
+            <p><a href="#logout">Đăng Xuất</a></p>
+        </div>
+    </footer>
+</section>
+</body>
+</html>
