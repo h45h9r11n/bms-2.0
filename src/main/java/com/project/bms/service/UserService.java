@@ -17,7 +17,6 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
-    Logger logger = org.slf4j.LoggerFactory.getLogger(UserService.class);
     private String hashPassword(String password) {
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
@@ -45,6 +44,7 @@ public class UserService {
     public boolean login(String username, String password) {
 
         User user = userRepository.findByUsername(username);
+//        System.out.println(user.getUsername());
         if (user == null) {
             System.out.println(hashPassword(password));
             return false; // User not found

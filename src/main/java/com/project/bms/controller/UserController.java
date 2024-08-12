@@ -50,8 +50,8 @@ public class UserController {
 
     @PostMapping("/req/login")
     @ResponseBody
-    public ResponseEntity login(@RequestBody String username, @RequestBody String password) {
-        if (userService.login(username, password)) {
+    public ResponseEntity login(User user) {
+        if (userService.login(user.getUsername(), user.getPassword())) {
             return ResponseEntity.status(HttpStatus.OK).body("Login successful!");
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Incorrect username or password!");

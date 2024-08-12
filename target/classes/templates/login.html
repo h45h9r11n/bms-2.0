@@ -40,16 +40,15 @@
 
     const username = document.getElementById('username').value;
     const password = document.getElementById('password').value;
-
+    const data = {username, password};
+    const jsonData = JSON.stringify(data);
     fetch('/req/login', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({
-            username: username,
-            password: password
-        })
+
+        body: jsonData
     })
         .then(response => response.text())
         .then(data => {

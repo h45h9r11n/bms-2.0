@@ -19,27 +19,13 @@ public class UserRepository {
     public User findByUsername(String username) {
 
         String sql = "SELECT * FROM users WHERE username = ?";
-        return jdbcTemplate.execute(connection -> {
-            PreparedStatement ps = connection.prepareStatement(sql);
-            ps.setString(1, username);
-            return ps;
-        }, (PreparedStatement ps) -> {
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    User user = new User();
-                    user.setId(rs.getLong("id"));
-                    user.setUsername(rs.getString("username"));
-                    user.setPassword(rs.getString("password"));
-                    user.setEmail(rs.getString("email"));
-                    user.setFullname(rs.getString("fullname"));
-                    user.setRole(rs.getString("role"));
-                    user.setAvatar(rs.getString("avatar"));
-                    return user;
-                } else {
-                    return null;
-                }
-            }
-        });
+        try{
+            jdbcTemplate.queryForObject(sql, new UserRowMapper(), username);
+        } catch (Exception e) {
+            System.out.println("Error: " + e);
+            return null;
+        }
+        return jdbcTemplate.queryForObject(sql, new UserRowMapper(), username);
 
     }
 
