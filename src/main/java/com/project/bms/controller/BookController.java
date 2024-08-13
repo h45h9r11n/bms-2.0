@@ -136,10 +136,22 @@ public class BookController {
                 book.setImage(filename);
 
             }
-            book.setTitle(bookDTO.getTitle());
-            book.setAuthor(bookDTO.getAuthor());
-            book.setDescription(bookDTO.getDescription());
-            book.setPrice(bookDTO.getPrice());
+            if (!bookDTO.getTitle().equals(book.getTitle())){
+                book.setTitle(bookDTO.getTitle());
+            }
+
+            if (!bookDTO.getAuthor().equals(book.getAuthor())){
+                book.setAuthor(bookDTO.getAuthor());
+            }
+
+            if (!bookDTO.getDescription().equals(book.getDescription())){
+                book.setDescription(bookDTO.getDescription());
+            }
+
+            if (bookDTO.getPrice() != book.getPrice()){
+                book.setPrice(bookDTO.getPrice());
+            }
+
             bookRepository.save(book);
 
         } catch (Exception e) {

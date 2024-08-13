@@ -17,7 +17,7 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
-    private String hashPassword(String password) {
+    public String hashPassword(String password) {
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
             byte[] encodedHash = digest.digest(password.getBytes(StandardCharsets.UTF_8));
@@ -56,4 +56,16 @@ public class UserService {
             return false; // Incorrect password
         }
     }
+
+    public boolean reset(Long id, String password){
+        User user = userRepository.findById(id);
+        if (user == null) {
+            return false; // User not found
+        }
+        System.out.println(hashPassword(password));
+        userRepository.updatePassword(id, hashPassword(password));
+        return true;
+    }
+
+
 }
