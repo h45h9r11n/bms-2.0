@@ -6,28 +6,28 @@
   <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
   <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
   <link rel="stylesheet" href="/css/style.css">
-  <script src="/js/signup.js" defer></script>
+
 </head>
 <body>
 <body>
     <section>
-        <form action="/req/login" method="post">
+        <form id="loginForm" action="/req/login" method="post">
             <h1>Login</h1>
 
             <div class="inputbox">
                 <ion-icon name="username-outline"></ion-icon>
-                <input name="username" type="username" required>
+                <input id="username" type="text" name="username" required>
                 <label for="">Username</label>
             </div>
             <div class="inputbox">
                 <ion-icon name="lock-closed-outline"></ion-icon>
-                <input name="password" type="password" required>
+                <input id="password" type="password" name="password" required>
                 <label for="">Password</label>
             </div>
             <div class="register">
                 <p><a href="#">Forget Password ?</a></p>
             </div>
-            <button>Log in</button>
+            <button id="submit" type="submit">Log in</button>
             <div class="register">
                 <p>Don't have a account ?<a href="/req/signup"> Register!!</a></p>
             </div>
@@ -36,10 +36,11 @@
 </body>
 
 <script>document.getElementById('loginForm').addEventListener('submit', function(event) {
-    event.preventDefault();
 
+    event.preventDefault();
     const username = document.getElementById('username').value;
     const password = document.getElementById('password').value;
+
     const data = {username, password};
     const jsonData = JSON.stringify(data);
     fetch('/req/login', {
@@ -50,17 +51,24 @@
 
         body: jsonData
     })
-        .then(response => response.text())
-        .then(data => {
-            alert(data);
-            if (data === "Login successful!") {
-                window.location.href = "/admin";
+        .then(response => {
+            if (response.ok) {
+                return response.text();
             } else {
-                console.log(data);
-                window.location.href = "/req/login";
+                throw new Error('Login failed');
             }
         })
-        .catch(error => console.error('Error:', error));
-});
+        .then(message => {
+            // alert(message);
+            if(message.includes('successfully')){
+                window.location.href = '/admin';
+            }
+
+        })
+        .catch(error => {
+            alert(error.message);
+            console.error('Error:', error);
+        });
+})
 </script>
   

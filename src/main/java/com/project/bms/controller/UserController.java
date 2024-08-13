@@ -31,8 +31,13 @@ public class UserController {
     }
 
     @GetMapping("/admin")
-    public String index() {
+    public String admin() {
         return "admin";
+    }
+
+    @GetMapping("/index")
+    public String index() {
+        return "index";
     }
 
     @PostMapping("/req/signup")
@@ -50,11 +55,13 @@ public class UserController {
 
     @PostMapping("/req/login")
     @ResponseBody
-    public ResponseEntity login(User user) {
+    public ResponseEntity login(@RequestBody User user) {
         if (userService.login(user.getUsername(), user.getPassword())) {
-            return ResponseEntity.status(HttpStatus.OK).body("Login successful!");
+            return ResponseEntity.status(HttpStatus.OK).body("Login successfully!");
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Incorrect username or password!");
         }
     }
+
+
 }

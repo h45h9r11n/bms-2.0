@@ -13,28 +13,29 @@
 
     <table class="table">
         <thead>
-            <tr>
-                <th>ID</th>
-                <th>Cover</th>
-                <th>Title</th>
-                <th>Author</th>
-                <th>Description</th>
-                <th>Price</th>
-                <th>Action</th>
-            </tr>
-            <tbody>
-                <tr th:each="book : ${books}">
-                    <td th:text="${book.id}">1</td>
-                    <td><img th:src="@{'/images/' + ${book.image}}" alt="Cover" style="width: 100px; height: 100px;"></td>
-                    <td th:text="${book.title}">Book 1</td>
-                    <td th:text="${book.author}">Author 1</td>
-                    <td th:text="${book.description}">Description 1</td>
-                    <td th:text="${book.price}">100.000</td>
-                    <td>
-                        <a class="btn btn-primary" href="/books/edit">Edit</a>
-                        <a class="btn btn-danger" href="/books/delete">Delete</a>
-                    </td>
-            </tbody>
+        <tr>
+            <th>ID</th>
+            <th>Cover</th>
+            <th>Title</th>
+            <th>Author</th>
+            <th>Description</th>
+            <th>Price</th>
+            <th>Action</th>
+        </tr>
+        <tbody>
+        <tr th:each="book : ${books}">
+            <td th:text="${book.id}">1</td>
+            <td><img th:src="@{'/images/' + ${book.image}}" alt="Cover" style="width: 100px; height: 100px;"></td>
+            <td th:text="${book.title}">Book 1</td>
+            <td th:text="${book.author}">Author 1</td>
+            <td th:text="${book.description}">Description 1</td>
+            <td th:text="${book.price}">100.000</td>
+            <td>
+                <a class="btn btn-primary" th:href="@{/books/edit(id=${book.id})}">Edit</a>
+
+                <a class="btn btn-danger" onclick="return confirm('Are you sure?')" th:href="@{/books/delete(id=${book.id})}">Delete</a>
+            </td>
+        </tbody>
         </thead>
 
     </table>

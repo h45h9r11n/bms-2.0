@@ -44,9 +44,8 @@ public class UserService {
     public boolean login(String username, String password) {
 
         User user = userRepository.findByUsername(username);
-//        System.out.println(user.getUsername());
         if (user == null) {
-            System.out.println(hashPassword(password));
+//            System.out.println(hashPassword(password));
             return false; // User not found
         }
 
