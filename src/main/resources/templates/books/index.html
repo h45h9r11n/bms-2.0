@@ -33,7 +33,7 @@
             <td th:text="${book.price}">100.000</td>
             <td>
                 <a class="btn btn-primary" th:href="@{/books/edit(id=${book.id})}">Edit</a>
-
+                <a class="btn btn-primary" th:href="@{/books/view(id=${book.id})}">View</a>
                 <a class="btn btn-danger" onclick="return confirm('Are you sure?')" th:href="@{/books/delete(id=${book.id})}">Delete</a>
             </td>
         </tbody>

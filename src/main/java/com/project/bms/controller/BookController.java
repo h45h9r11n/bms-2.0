@@ -1,7 +1,9 @@
 package com.project.bms.controller;
 
 import com.project.bms.model.BookDTO;
+import com.project.bms.model.Comment;
 import com.project.bms.repository.BookRepository;
+import com.project.bms.repository.CommentRepository;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -27,11 +29,30 @@ public class BookController {
     @Autowired
     private BookRepository bookRepository;
 
+    @Autowired
+    private CommentRepository commentRepository;
+
     @GetMapping({"", "/"})
     public String showBooks(Model model) {
         List<Book> books = bookRepository.findAll();
         model.addAttribute("books", books);
         return "/books/index";
+    }
+
+    @GetMapping("/view")
+    public String showBook(Model model, @RequestParam Long id) {
+        try{
+            //get book's information
+            Book book = bookRepository.findById(id);
+            model.addAttribute("book", book);
+            //get book's comments
+            List<Comment> comments = commentRepository.findByBookId(id);
+            model.addAttribute("comments", comments);
+        } catch (Exception e){
+            e.printStackTrace();
+            return "redirect:/books";
+        }
+        return "/books/profile";
     }
 
     @GetMapping("/create")
