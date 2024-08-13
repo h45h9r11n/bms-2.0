@@ -39,7 +39,11 @@
                         <th>Price:</th>
                         <td th:text="${book.price}">100.000</td>
                     </tr>
+                    <tr>
+                        <th>Comments:</th>
+                    </tr>
                     <tr th:each="comment : ${comments}">
+                        <td th:text="@{'user ' + ${comment.userid}}"></td>
                         <td th:text="${comment.content}"></td>
                     </tr>
 
