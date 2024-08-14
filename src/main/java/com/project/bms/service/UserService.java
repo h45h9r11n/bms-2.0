@@ -1,11 +1,14 @@
 package com.project.bms.service;
 
+import com.project.bms.model.Session;
 import com.project.bms.model.User;
 import com.project.bms.repository.UserRepository;
+import jakarta.servlet.http.*;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -16,6 +19,9 @@ public class UserService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private SessionService sessionService;
 
     public String hashPassword(String password) {
         try {
@@ -52,9 +58,10 @@ public class UserService {
         if (hashPassword(password).equals(user.getPassword())) {
             return true; // Login successful
         } else {
-
             return false; // Incorrect password
         }
+
+
     }
 
     public boolean reset(Long id, String password){
@@ -66,6 +73,9 @@ public class UserService {
         userRepository.updatePassword(id, hashPassword(password));
         return true;
     }
+
+//    public User getCurrentUser() {
+//    }
 
 
 }

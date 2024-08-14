@@ -1,0 +1,4 @@
+CREATE TABLE IF NOT EXISTS sessions (
+    id VARCHAR(64) PRIMARY KEY,
+    user_id BIGINT NOT NULL
+);

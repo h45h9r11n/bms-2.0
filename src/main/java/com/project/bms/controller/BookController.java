@@ -2,8 +2,12 @@ package com.project.bms.controller;
 
 import com.project.bms.model.BookDTO;
 import com.project.bms.model.Comment;
+import com.project.bms.model.CommentDTO;
 import com.project.bms.repository.BookRepository;
 import com.project.bms.repository.CommentRepository;
+import com.project.bms.repository.SessionRepository;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -20,8 +24,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.sql.ResultSet;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/books")
@@ -32,6 +38,7 @@ public class BookController {
     @Autowired
     private CommentRepository commentRepository;
 
+    @Autowired SessionRepository sessionRepository;
     @GetMapping({"", "/"})
     public String showBooks(Model model) {
         List<Book> books = bookRepository.findAll();
@@ -47,12 +54,44 @@ public class BookController {
             model.addAttribute("book", book);
             //get book's comments
             List<Comment> comments = commentRepository.findByBookId(id);
+            CommentDTO commentDTO = new CommentDTO();
             model.addAttribute("comments", comments);
+            model.addAttribute("commentDTO", commentDTO);
         } catch (Exception e){
             e.printStackTrace();
             return "redirect:/books";
         }
         return "/books/profile";
+    }
+
+    @PostMapping("/comment")
+    public String createComment(HttpServletRequest request, @Valid @ModelAttribute CommentDTO commentDTO, BindingResult result) {
+        if (commentDTO.getContent().isEmpty()){
+            result.addError(new FieldError("commentDTO", "content", "Content is required"));
+        }
+        if (result.hasErrors()){
+            return "redirect:/books/view?id=" + commentDTO.getBookid();
+        }
+
+        Cookie[] cookies = request.getCookies();
+        Long userId = null;
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals("SESSIONID")) {
+                    String sessionId = cookie.getValue();
+                    userId = sessionRepository.findBySessionId(sessionId).getUserId();
+                }
+            }
+        }
+        System.out.println(commentDTO.getBookid());
+        System.out.println(commentDTO.getContent());
+        Comment comment = new Comment();
+        comment.setBookid(Long.valueOf(commentDTO.getBookid()));
+        comment.setUserid(userId);
+        comment.setContent(commentDTO.getContent());
+        commentRepository.save(comment);
+
+        return "redirect:/books/view?id=" + comment.getBookid();
     }
 
     @GetMapping("/create")
@@ -198,4 +237,5 @@ public class BookController {
         }
         return "redirect:/books";
     }
+
 }

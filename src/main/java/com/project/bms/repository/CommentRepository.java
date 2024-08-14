@@ -6,6 +6,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
@@ -35,6 +36,18 @@ public class CommentRepository {
             return null;
         }
         return jdbcTemplate.query(sql, new CommentRowMapper(), bookId);
+    }
+
+    public void save(Comment comment){
+        String sql = "INSERT INTO comments (book_id, user_id, content) VALUES (?, ?, ?)";
+        jdbcTemplate.update(connection -> {
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setLong(1, comment.getBookid());
+            ps.setLong(2, comment.getUserid());
+            ps.setString(3, comment.getContent());
+            return ps;
+        });
+
     }
 
     private static class CommentRowMapper implements RowMapper<Comment> {
