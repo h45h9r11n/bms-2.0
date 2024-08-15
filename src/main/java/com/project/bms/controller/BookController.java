@@ -17,6 +17,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 import com.project.bms.model.Book;
 import org.springframework.web.multipart.MultipartFile;
+import com.project.bms.model.Query;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -236,6 +237,27 @@ public class BookController {
             e.printStackTrace();
         }
         return "redirect:/books";
+    }
+
+    @PostMapping("/search")
+    public String searchBook(Model model, @Valid @ModelAttribute Query query, BindingResult result) throws IOException {
+        try {
+            String title = query.getContent();
+            if (title == null) {
+                result.addError(new FieldError("query", "content", "Content is required"));
+            }
+            if (result.hasErrors()) {
+                return "redirect:/users/home";
+            }
+
+            System.out.println(title);
+            List<Book> books = bookRepository.findByTitleContaining(title);
+            model.addAttribute("books", books);
+        } catch (Exception e) {
+                throw new RuntimeException(e);
+        }
+
+        return "/books/searchresult";
     }
 
 }

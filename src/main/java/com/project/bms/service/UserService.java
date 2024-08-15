@@ -51,14 +51,13 @@ public class UserService {
 
         User user = userRepository.findByUsername(username);
         if (user == null) {
-//            System.out.println(hashPassword(password));
-            return false; // User not found
+            return false;
         }
 
         if (hashPassword(password).equals(user.getPassword())) {
-            return true; // Login successful
+            return true;
         } else {
-            return false; // Incorrect password
+            return false; 
         }
 
 

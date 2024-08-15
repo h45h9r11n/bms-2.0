@@ -34,6 +34,7 @@
             <td th:text="${user.role}">User</td>
             <td>
                 <a class="btn btn-primary" th:href="@{/users/edit(id=${user.id})}">Edit</a>
+                <a class="btn btn-primary" th:href="@{/users/view(id=${user.id})}">View</a>
                 <a class="btn btn-primary" th:href="@{/users/reset(id=${user.id})}">Reset Password</a>
                 <a class="btn btn-danger" onclick="return confirm('Are you sure?')" th:href="@{/users/delete(id=${user.id})}">Delete</a>
             </td>

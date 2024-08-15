@@ -11,7 +11,7 @@
 <body>
 <body>
     <section>
-        <form id="loginForm" action="/req/login" method="post">
+        <form id="loginForm" action="/login" method="post">
             <h1>Login</h1>
 
             <div class="inputbox">
@@ -29,46 +29,40 @@
             </div>
             <button id="submit" type="submit">Log in</button>
             <div class="register">
-                <p>Don't have a account ?<a href="/req/signup"> Register!!</a></p>
+                <p>Don't have a account ?<a href="/signup"> Register!!</a></p>
             </div>
         </form>
     </section>
 </body>
 
-<script>document.getElementById('loginForm').addEventListener('submit', function(event) {
+<script>
+    document.getElementById('loginForm').addEventListener('submit', function(event) {
+        event.preventDefault();
 
-    event.preventDefault();
-    const username = document.getElementById('username').value;
-    const password = document.getElementById('password').value;
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
 
-    const data = {username, password};
-    const jsonData = JSON.stringify(data);
-    fetch('/req/login', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
+        const data = { username, password };
+        const jsonData = JSON.stringify(data);
 
-        body: jsonData
-    })
-        .then(response => {
-            if (response.ok) {
-                return response.text();
-            } else {
-                throw new Error('Login failed');
-            }
+        fetch('/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: jsonData
         })
-        .then(message => {
-            // alert(message);
-            if(message.includes('successfully')){
-                window.location.href = '/admin';
-            }
-
-        })
-        .catch(error => {
-            alert(error.message);
-            console.error('Error:', error);
-        });
-})
+            .then(response => response.json())
+            .then(data => {
+                if (data.redirectUrl) {
+                    window.location.href = data.redirectUrl;
+                } else {
+                    throw new Error('Redirection URL not found in response');
+                }
+            })
+            .catch(error => {
+                alert(error.message);
+                console.error('Error:', error);
+            });
+    });
 </script>
-  

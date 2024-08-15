@@ -62,6 +62,17 @@ public class BookRepository {
         jdbcTemplate.update(sql, id);
     }
 
+    public List<Book> findByTitleContaining(String keyword) {
+        String sql = "SELECT * FROM books WHERE title LIKE ?";
+        try {
+            return jdbcTemplate.query(sql, new BookRowMapper(), "%" + keyword + "%");
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("Error querying books by title", e);
+        }
+
+    }
+
     private static class BookRowMapper implements RowMapper<Book> {
         @Override
         public Book mapRow(ResultSet rs, int rowNum) throws SQLException {

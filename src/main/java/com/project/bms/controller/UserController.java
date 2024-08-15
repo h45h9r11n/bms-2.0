@@ -1,8 +1,11 @@
 package com.project.bms.controller;
 
+import com.project.bms.model.Query;
 import com.project.bms.model.UserDTO;
 import com.project.bms.repository.UserRepository;
+import com.project.bms.service.SessionService;
 import com.project.bms.service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -31,6 +34,8 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+    @Autowired
+    private SessionService sessionService;
 
     @GetMapping({"", "/"})
     public String showUsers(Model model) {
@@ -201,5 +206,25 @@ public class UserController {
         return "redirect:/users";
     }
 
+    @GetMapping("/view")
+    public String showUser(Model model, HttpServletRequest request) {
+        String sessionId = sessionService.getSessionId(sessionService.getCookies(request));
+        Long id = sessionService.getUserId(sessionId);
+        try {
+            User user = userRepository.findById(id);
+            model.addAttribute("user", user);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "redirect:/users";
+        }
+        return "/users/profile";
+    }
+
+    @GetMapping("/home")
+    public String showHome(Model model) {
+        Query query = new Query();
+        model.addAttribute("query", query);
+        return "/users/home";
+    }
 
 }

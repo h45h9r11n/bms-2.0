@@ -10,6 +10,7 @@ spring:
     url: jdbc:mariadb://localhost:3306/registration
     password: MYSql@123
 
+
   jpa:
     hibernate:
       ddl-auto: update
