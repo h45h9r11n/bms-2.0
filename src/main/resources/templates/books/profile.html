@@ -10,6 +10,7 @@
 <div class="container">
     <h1 class="text-center my-4">Book Details</h1>
     <a class="btn btn-primary" href="/books" id="back-to-list-book">Back to List Book</a>
+    <a class="btn btn-primary" href="/users/home" id="back-to-home" style="float: right">Back to Homepage</a>
 
     <table class="table">
         <tbody>
@@ -82,6 +83,8 @@
         console.log(role);
         if (role === 'USER') {
             document.getElementById("back-to-list-book").style.visibility="hidden";
+        } else {
+            document.getElementById("back-to-home").style.visibility="hidden";
         }
     }
     hideButtonIfUser();

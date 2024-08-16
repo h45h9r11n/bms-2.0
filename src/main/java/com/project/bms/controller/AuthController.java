@@ -80,7 +80,7 @@ public class AuthController {
             Cookie roleCookie = new Cookie("ROLE", role);
             roleCookie.setMaxAge(60 * 60);
             roleCookie.setPath("/");
-            roleCookie.setHttpOnly(true);
+            roleCookie.setHttpOnly(false);
             response.addCookie(roleCookie);
 
             String redirectUrl = "/login"; //
