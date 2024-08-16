@@ -38,64 +38,82 @@ public class UserController {
     private SessionService sessionService;
 
     @GetMapping({"", "/"})
-    public String showUsers(Model model) {
-        List<User> users = userRepository.findAll();
-        model.addAttribute("users", users);
-        return "/users/index";
+    public String showUsers(Model model, HttpServletRequest request) {
+        if (sessionService.getCookies(request) != null) {
+            if (sessionService.isAdmin(request)) {
+                List<User> users = userRepository.findAll();
+                model.addAttribute("users", users);
+                return "/users/index";
+            }
+        }
+        return "redirect:/";
     }
 
     @GetMapping("/create")
-    public String showCreateUser(Model model) {
-        UserDTO userDTO = new UserDTO();
-        model.addAttribute("userDTO", userDTO);
-        return "/users/create";
+    public String showCreateUser(HttpServletRequest request, Model model) {
+        if (sessionService.getCookies(request) != null) {
+            if (sessionService.isAdmin(request)) {
+                UserDTO userDTO = new UserDTO();
+                model.addAttribute("userDTO", userDTO);
+                return "/users/create";
+            }
+        }
+        return "redirect:/";
     }
 
     @PostMapping("/create")
-    public String createUser(@Valid @ModelAttribute UserDTO userDTO, BindingResult result) throws IOException {
-        if (userDTO.getAvatar().isEmpty()) {
-            result.addError(new FieldError("userDTO", "avatar", "Avatar is required"));
-        }
-        if (userRepository.findByUsername(userDTO.getUsername()) != null) {
-            result.addError(new FieldError("userDTO", "username", "Username already exists"));
-        }
-        if (result.hasErrors()) {
-            return "/users/create";
-        }
+    public String createUser(HttpServletRequest request, @Valid @ModelAttribute UserDTO userDTO, BindingResult result) throws IOException {
+        if (sessionService.getCookies(request) != null) {
+            if (sessionService.isAdmin(request)) {
+                if (userDTO.getAvatar().isEmpty()) {
+                    result.addError(new FieldError("userDTO", "avatar", "Avatar is required"));
+                }
+                if (userRepository.findByUsername(userDTO.getUsername()) != null) {
+                    result.addError(new FieldError("userDTO", "username", "Username already exists"));
+                }
+                if (result.hasErrors()) {
+                    return "/users/create";
+                }
 
-        // Save avatar
-        MultipartFile avatar = userDTO.getAvatar();
-        Date createAt = new Date();
-        String filename = createAt.getTime() + "_" + avatar.getOriginalFilename();
-        try {
-            String uploadDir = "public/avatars/";
-            Path uploadPath = Paths.get(uploadDir);
-            if (!Files.exists(uploadPath)) {
-                Files.createDirectories(uploadPath);
+                // Save avatar
+                MultipartFile avatar = userDTO.getAvatar();
+                Date createAt = new Date();
+                String filename = createAt.getTime() + "_" + avatar.getOriginalFilename();
+                try {
+                    String uploadDir = "public/avatars/";
+                    Path uploadPath = Paths.get(uploadDir);
+                    if (!Files.exists(uploadPath)) {
+                        Files.createDirectories(uploadPath);
+                    }
+                    try (InputStream inputStream = avatar.getInputStream()) {
+                        Path filePath = uploadPath.resolve(filename);
+                        Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING);
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    throw new RuntimeException("Failed to save avatar", e);
+                }
+
+                User user = new User();
+                user.setUsername(userDTO.getUsername());
+                user.setPassword(userService.hashPassword(userDTO.getPassword()));
+                user.setEmail(userDTO.getEmail());
+                user.setFullname(userDTO.getFullname());
+                user.setRole(userDTO.getRole());
+                user.setAvatar(filename);
+                userRepository.save(user);
+
+                return "redirect:/users";
             }
-            try (InputStream inputStream = avatar.getInputStream()) {
-                Path filePath = uploadPath.resolve(filename);
-                Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-            throw new RuntimeException("Failed to save avatar", e);
         }
-
-        User user = new User();
-        user.setUsername(userDTO.getUsername());
-        user.setPassword(userService.hashPassword(userDTO.getPassword()));
-        user.setEmail(userDTO.getEmail());
-        user.setFullname(userDTO.getFullname());
-        user.setRole(userDTO.getRole());
-        user.setAvatar(filename);
-        userRepository.save(user);
-
-        return "redirect:/users";
+        return "redirect:/";
     }
 
     @GetMapping("/edit")
-    public String showEditUser(Model model, @RequestParam Long id) {
+    public String showEditUser(HttpServletRequest request, Model model, @RequestParam Long id) {
+        if (sessionService.isSessionExpired(request)){
+            return "redirect:/";
+        }
         try {
             User user = userRepository.findById(id);
             model.addAttribute("user", user);
@@ -113,7 +131,11 @@ public class UserController {
     }
 
     @PostMapping("/edit")
-    public String editUser(Model model, @RequestParam Long id, @Valid @ModelAttribute UserDTO userDTO, BindingResult result) throws IOException {
+    public String editUser(HttpServletRequest request, Model model, @RequestParam Long id, @Valid @ModelAttribute UserDTO userDTO, BindingResult result) throws IOException {
+        if (sessionService.isSessionExpired(request)){
+            return "redirect:/";
+        }
+
         try {
             User user = userRepository.findById(id);
             model.addAttribute("user", user);
@@ -121,7 +143,7 @@ public class UserController {
             if (result.hasErrors()) {
                 return "/users/edit";
             }
-
+            
             if (!userDTO.getAvatar().isEmpty()) {
                 String uploadDir = "public/avatars/";
                 Path oldAvatarPath = Paths.get(uploadDir + user.getAvatar());
@@ -143,11 +165,14 @@ public class UserController {
                 user.setAvatar(filename);
             }
 
-            user.setUsername(userDTO.getUsername());
-//            user.setPassword(userDTO.getPassword());
+//            user.setUsername(userDTO.getUsername());
             user.setEmail(userDTO.getEmail());
             user.setFullname(userDTO.getFullname());
-            user.setRole(userDTO.getRole());
+            if (sessionService.getCookies(request) != null) {
+                if (sessionService.isAdmin(request)) {
+                    user.setRole(userDTO.getRole());
+                }
+            }
             userRepository.update(user);
 
         } catch (Exception e) {

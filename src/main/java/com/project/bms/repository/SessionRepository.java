@@ -48,6 +48,7 @@ public class SessionRepository {
             try {
                 session.setSessionId(resultSet.getString("id"));
                 session.setUserId(resultSet.getLong("user_id"));
+                session.setCreatedAt(resultSet.getTime("created_at"));
             } catch (Exception e) {
                 System.out.println("Error: " + e);
             }

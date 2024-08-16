@@ -1,6 +1,7 @@
 package com.project.bms.controller;
 import com.project.bms.model.Session;
 import com.project.bms.model.User;
+import com.project.bms.repository.SessionRepository;
 import com.project.bms.repository.UserRepository;
 import com.project.bms.service.SessionService;
 import com.project.bms.service.UserService;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -28,6 +30,8 @@ public class AuthController {
 
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private SessionRepository sessionRepository;
 
     @GetMapping("/")
     public String home() {
@@ -35,7 +39,16 @@ public class AuthController {
     }
 
     @GetMapping("/login")
-    public String login() {
+    public String login(HttpServletRequest request) {
+        if (sessionService.isLogged(request)){
+            Cookie[] cookies = sessionService.getCookies(request);
+            Session session = sessionRepository.findBySessionId(sessionService.getSessionId(cookies));
+            if (session != null){
+                if (!sessionService.isExpired(session)) {
+                    return "redirect:/users/home";
+                }
+            }
+        }
         return "login";
     }
 
@@ -88,7 +101,6 @@ public class AuthController {
     }
 
     @PostMapping("/logout")
-//    @ResponseBody
     public String logout(HttpServletRequest request, HttpServletResponse response) {
         if (!sessionService.isLogged(request)){
             return "redirect:/login";

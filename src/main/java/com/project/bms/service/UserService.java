@@ -35,7 +35,7 @@ public class UserService {
 
     public boolean register(String username, String password, String email) {
         if (userRepository.findByUsername(username) != null) {
-            return false; // Username already exists
+            return false;
         }
 
         String hashedPassword = hashPassword(password);
@@ -57,24 +57,20 @@ public class UserService {
         if (hashPassword(password).equals(user.getPassword())) {
             return true;
         } else {
-            return false; 
+            return false;
         }
-
-
     }
 
     public boolean reset(Long id, String password){
         User user = userRepository.findById(id);
         if (user == null) {
-            return false; // User not found
+            return false;
         }
         System.out.println(hashPassword(password));
         userRepository.updatePassword(id, hashPassword(password));
         return true;
     }
 
-//    public User getCurrentUser() {
-//    }
 
 
 }

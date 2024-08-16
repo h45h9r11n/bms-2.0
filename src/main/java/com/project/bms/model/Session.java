@@ -1,8 +1,6 @@
 package com.project.bms.model;
 
 import java.sql.Time;
-import java.sql.Timestamp;
-import java.time.Instant;
 
 public class Session {
     private String sessionId;
@@ -49,15 +47,7 @@ public class Session {
         this.createdAt = createdAt;
     }
 
-    public boolean isExpired() {
-        Timestamp now = new Timestamp(System.currentTimeMillis());
-        Instant expiredAtInstant = this.getCreatedAt().toInstant().plusMillis(60*60*1000);
-        Timestamp expiredAt = Timestamp.from(expiredAtInstant);
-        if (expiredAt.before(now)){
-            return false;
-        }
-        return true;
-    }
+
 
 
 }
