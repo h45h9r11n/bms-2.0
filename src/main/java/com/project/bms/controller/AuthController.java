@@ -15,7 +15,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -24,10 +23,8 @@ public class AuthController {
 
     @Autowired
     private UserService userService;
-
     @Autowired
     private SessionService sessionService;
-
     @Autowired
     private UserRepository userRepository;
     @Autowired
@@ -35,7 +32,7 @@ public class AuthController {
 
     @GetMapping("/")
     public String home() {
-        return "login";
+        return "redirect:/login";
     }
 
     @GetMapping("/login")
@@ -89,13 +86,13 @@ public class AuthController {
             String redirectUrl = "/login"; //
             if ("ADMIN".equalsIgnoreCase(role)) {
                 redirectUrl = "/admin";
-            } else if ("USER".equalsIgnoreCase(role)) {
+            } else {
                 redirectUrl = "/users/home";
             }
-
             responseBody.put("redirectUrl", redirectUrl);
             return ResponseEntity.ok(responseBody);
         }
+
         responseBody.put("redirectUrl", "/login");
         return ResponseEntity.ok(responseBody);
     }
@@ -121,8 +118,6 @@ public class AuthController {
 
         return "redirect:/login";
     }
-
-
 }
 
 

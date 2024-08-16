@@ -1,6 +1,7 @@
 package com.project.bms.repository;
 
 import com.project.bms.model.Book;
+import com.project.bms.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -37,6 +38,20 @@ public class BookRepository {
             ps.setString(3, book.getPrice());
             ps.setString(4, book.getDescription());
             ps.setString(5, book.getImage());
+            return ps;
+        });
+    }
+
+    public void update(Book book){
+        String sql = "UPDATE books SET title = ?, author = ?, price = ?, description = ?, image = ? WHERE id = ?";
+        jdbcTemplate.update(connection -> {
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setString(1, book.getTitle());
+            ps.setString(2, book.getAuthor());
+            ps.setString(3, book.getPrice());
+            ps.setString(4, book.getDescription());
+            ps.setString(5, book.getImage());
+            ps.setLong(6, book.getId());
             return ps;
         });
     }

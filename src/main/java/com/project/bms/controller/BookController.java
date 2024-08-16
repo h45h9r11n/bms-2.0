@@ -245,7 +245,7 @@ public class BookController {
                         book.setPrice(bookDTO.getPrice());
                     }
 
-                    bookRepository.save(book);
+                    bookRepository.update(book);
 
                 } catch (Exception e) {
                     throw new RuntimeException(e);

@@ -62,7 +62,9 @@ public class SessionService {
         return role;
     }
 
-    public Long getUserId(String sessionId) {
+    public Long getUserId(HttpServletRequest request) {
+        Cookie[] cookies = getCookies(request);
+        String sessionId = getSessionId(cookies);
         return sessionRepository.findBySessionId(sessionId).getUserId();
     }
 
@@ -91,11 +93,10 @@ public class SessionService {
     public boolean isAdmin(HttpServletRequest request) {
         if (isLogged(request)) {
             String sessionId = getSessionId(getCookies(request));
-//            System.out.println(sessionId);
             Session session = findBySessionId(sessionId);
 
             if (!isExpired(session)) {
-                Long userid = getUserId(sessionId);
+                Long userid = getUserId(request);
                 String role = userRepository.findById(userid).getRole();
                 if (role.equals("ADMIN")) {
                     return true;
