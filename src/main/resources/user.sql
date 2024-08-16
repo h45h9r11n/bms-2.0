@@ -7,3 +7,4 @@ CREATE TABLE users (
     role VARCHAR(20) DEFAULT 'USER',
     avatar VARCHAR(255)
 );
+
