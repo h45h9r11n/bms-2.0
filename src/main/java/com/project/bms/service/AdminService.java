@@ -11,8 +11,9 @@ import java.util.List;
 @Service
 public class AdminService {
     public boolean backup(String filename){
-        String pathDir = "/tmp/" + filename;
-        String command = "cp -r ./public " + pathDir + " && chdir /tmp && zip -r " + filename + ".zip " + pathDir;
+
+        String command = "chdir public && mkdir " + filename + " && cp -r images avatars " + filename + " && zip -r " + filename + ".zip " + filename;
+        System.out.println(command);
         try {
             ProcessBuilder processBuilder = new ProcessBuilder("sh", "-c", command);
             processBuilder.redirectErrorStream(true);

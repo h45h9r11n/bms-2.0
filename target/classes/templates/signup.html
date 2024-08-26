@@ -6,11 +6,10 @@
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
     <link rel="stylesheet" href="/css/style.css">
-<!--    <script src="/js/signup.js" defer></script>-->
 </head>
 <body>
 <section>
-    <form id="signup-form" action="/req/signup" method="post">
+    <form id="signup-form" action="/signup" method="post">
         <h1>Sign Up</h1>
         <div class="inputbox">
             <ion-icon name="person-outline"></ion-icon>
@@ -28,6 +27,7 @@
             <input type="password" id="password" name="password" required>
             <label for="password">Password</label>
         </div>
+
         <div class="inputbox">
             <ion-icon name="lock-closed-outline"></ion-icon>
             <input type="password" id="confirm-password" name="confirm-password" required>
@@ -35,7 +35,7 @@
         </div>
         <button id="submit" type="submit">Sign Up</button>
         <div class="register">
-            <p>Already have an account? <a href="/req/login">Log In</a></p>
+            <p>Already have an account? <a href="/login">Log In</a></p>
         </div>
     </form>
 </section>
@@ -75,7 +75,7 @@
                 .then(message => {
                     alert(message);
                     if (message.includes('successfully')) {
-                        window.location.href = '/req/login';
+                        window.location.href = '/login';
                     }
                 })
                 .catch(error => {

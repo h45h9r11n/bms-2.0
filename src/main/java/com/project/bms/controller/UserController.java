@@ -1,7 +1,9 @@
 package com.project.bms.controller;
 
+import com.project.bms.model.Book;
 import com.project.bms.model.Query;
 import com.project.bms.model.UserDTO;
+import com.project.bms.repository.BookRepository;
 import com.project.bms.repository.SessionRepository;
 import com.project.bms.repository.UserRepository;
 import com.project.bms.service.SessionService;
@@ -35,6 +37,8 @@ public class UserController {
     private UserRepository userRepository;
 
     @Autowired
+    private BookRepository bookRepository;
+    @Autowired
     private UserService userService;
     @Autowired
     private SessionService sessionService;
@@ -47,6 +51,8 @@ public class UserController {
     public String showUsers(Model model, HttpServletRequest request) {
         if (sessionService.getCookies(request) != null) {
             if (sessionService.isAdmin(request)) {
+                User user = userRepository.findById(sessionService.getUserId(request));
+                model.addAttribute("user", user);
                 List<User> users = userRepository.findAll();
                 model.addAttribute("users", users);
                 return "/users/index";
@@ -59,6 +65,8 @@ public class UserController {
     public String showCreateUser(HttpServletRequest request, Model model) {
         if (sessionService.getCookies(request) != null) {
             if (sessionService.isAdmin(request)) {
+                User user = userRepository.findById(sessionService.getUserId(request));
+                model.addAttribute("user", user);
                 UserDTO userDTO = new UserDTO();
                 model.addAttribute("userDTO", userDTO);
                 return "/users/create";
@@ -187,7 +195,7 @@ public class UserController {
                 if (sessionService.isAdmin(request)){
                     return "redirect:/users";
                 } else {
-                    return "redirect:/users/view";
+                    return "redirect:/users/view?id=" + id;
                 }
 
             }
@@ -266,18 +274,18 @@ public class UserController {
     }
 
     @GetMapping("/view")
-    public String showUser(Model model, HttpServletRequest request) {
-        if (!sessionService.isSessionExpired(request)) {
-            String sessionId = sessionService.getSessionId(sessionService.getCookies(request));
-            Long id = sessionService.getUserId(request);
-            try {
-                User user = userRepository.findById(id);
-                model.addAttribute("user", user);
-            } catch (Exception e) {
-                e.printStackTrace();
-                return "redirect:/users";
+    public String showUser(Model model, @RequestParam Long id, HttpServletRequest request) {
+        if (sessionService.getCookies(request) != null) {
+            if (sessionService.isAdmin(request) || (sessionService.getUserId(request) == id)) {
+                try {
+                    User user = userRepository.findById(id);
+                    model.addAttribute("user", user);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    return "redirect:/users";
+                }
+                return "/users/profile";
             }
-            return "/users/profile";
         }
         return "redirect:/";
     }
@@ -285,8 +293,12 @@ public class UserController {
     @GetMapping("/home")
     public String showHome(Model model, HttpServletRequest request) {
         if (!sessionService.isSessionExpired(request)){
+            User user = userRepository.findById(sessionService.getUserId(request));
+            model.addAttribute("user", user);
             Query query = new Query();
             model.addAttribute("query", query);
+            List<Book> books = bookRepository.findAll();
+            model.addAttribute("books", books);
             return "/users/home";
         }
         return "redirect:/";

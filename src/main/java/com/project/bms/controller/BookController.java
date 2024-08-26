@@ -1,11 +1,10 @@
 package com.project.bms.controller;
 
-import com.project.bms.model.BookDTO;
-import com.project.bms.model.Comment;
-import com.project.bms.model.CommentDTO;
+import com.project.bms.model.*;
 import com.project.bms.repository.BookRepository;
 import com.project.bms.repository.CommentRepository;
 import com.project.bms.repository.SessionRepository;
+import com.project.bms.repository.UserRepository;
 import com.project.bms.service.SessionService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -16,9 +15,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
-import com.project.bms.model.Book;
 import org.springframework.web.multipart.MultipartFile;
-import com.project.bms.model.Query;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -39,7 +36,8 @@ public class BookController {
 
     @Autowired
     private CommentRepository commentRepository;
-
+    @Autowired
+    private UserRepository userRepository;
     @Autowired
     private SessionRepository sessionRepository;
 
@@ -50,6 +48,8 @@ public class BookController {
     public String showBooks(HttpServletRequest request, Model model) {
         if (sessionService.getCookies(request) != null) {
             if (sessionService.isAdmin(request)) {
+                User user = userRepository.findById(sessionService.getUserId(request));
+                model.addAttribute("user", user);
                 List<Book> books = bookRepository.findAll();
                 model.addAttribute("books", books);
                 return "/books/index";
@@ -64,6 +64,8 @@ public class BookController {
             return "redirect:/";
         }
         try{
+            User user = userRepository.findById(sessionService.getUserId(request));
+            model.addAttribute("user", user);
             //get book's information
             Book book = bookRepository.findById(id);
             model.addAttribute("book", book);
@@ -115,6 +117,8 @@ public class BookController {
     public String showCreateBook(Model model, HttpServletRequest request) {
         if (sessionService.getCookies(request) != null) {
             if (sessionService.isAdmin(request)) {
+                User user = userRepository.findById(sessionService.getUserId(request));
+                model.addAttribute("user", user);
                 BookDTO bookDTO = new BookDTO();
                 model.addAttribute("bookDTO", bookDTO);
                 return "/books/create";
@@ -124,9 +128,11 @@ public class BookController {
     }
 
     @PostMapping("/create")
-    public String createBook(HttpServletRequest request, @Valid @ModelAttribute BookDTO bookDTO, BindingResult result) throws IOException {
+    public String createBook(Model model, HttpServletRequest request, @Valid @ModelAttribute BookDTO bookDTO, BindingResult result) throws IOException {
         if (sessionService.getCookies(request) != null) {
             if (sessionService.isAdmin(request)) {
+                User user = userRepository.findById(sessionService.getUserId(request));
+                model.addAttribute("user", user);
                 if (bookDTO.getImage().isEmpty()) {
                     result.addError(new FieldError("bookDTO", "image", "Image is required"));
                 }
@@ -177,6 +183,8 @@ public class BookController {
         if (sessionService.getCookies(request) != null) {
             if (sessionService.isAdmin(request)) {
                 try {
+                    User user = userRepository.findById(sessionService.getUserId(request));
+                    model.addAttribute("user", user);
                     Book book = bookRepository.findById(id);
                     model.addAttribute("book", book);
                     BookDTO bookDTO = new BookDTO();
@@ -286,6 +294,8 @@ public class BookController {
             return "redirect:/";
         }
         try {
+            User user = userRepository.findById(sessionService.getUserId(request));
+            model.addAttribute("user", user);
             String title = query.getContent();
             if (title == null) {
                 result.addError(new FieldError("query", "content", "Content is required"));

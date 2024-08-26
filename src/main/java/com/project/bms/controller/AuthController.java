@@ -83,12 +83,7 @@ public class AuthController {
             roleCookie.setHttpOnly(false);
             response.addCookie(roleCookie);
 
-            String redirectUrl = "/login"; //
-            if ("ADMIN".equalsIgnoreCase(role)) {
-                redirectUrl = "/admin";
-            } else {
-                redirectUrl = "/users/home";
-            }
+            String redirectUrl = "/users/home"; //
             responseBody.put("redirectUrl", redirectUrl);
             return ResponseEntity.ok(responseBody);
         }
@@ -97,7 +92,7 @@ public class AuthController {
         return ResponseEntity.ok(responseBody);
     }
 
-    @PostMapping("/logout")
+    @GetMapping("/logout")
     public String logout(HttpServletRequest request, HttpServletResponse response) {
         if (!sessionService.isLogged(request)){
             return "redirect:/login";

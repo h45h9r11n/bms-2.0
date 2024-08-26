@@ -1,20 +1,19 @@
 package com.project.bms.controller;
 
+import com.project.bms.model.File;
+import com.project.bms.model.User;
 import com.project.bms.repository.UserRepository;
 import com.project.bms.service.AdminService;
 import com.project.bms.service.SessionService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.File;
 import java.io.IOException;
 
 @Controller
@@ -29,9 +28,11 @@ public class AdminController {
     private AdminService adminService;
 
     @GetMapping("/admin")
-    public String admin(HttpServletRequest request) {
+    public String admin(Model model, HttpServletRequest request) {
         if (sessionService.getCookies(request) != null) {
             if (sessionService.isAdmin(request)) {
+                User user = userRepository.findById(sessionService.getUserId(request));
+                model.addAttribute("user", user);
                 return "admin";
             }
         }
@@ -42,8 +43,10 @@ public class AdminController {
     public String showBackup(Model model, HttpServletRequest request) {
         if (sessionService.getCookies(request) != null) {
             if (sessionService.isAdmin(request)) {
-                File file = new File("");
-                model.addAttribute("File", file);
+                User user = userRepository.findById(sessionService.getUserId(request));
+                model.addAttribute("user", user);
+                File file = new File();
+                model.addAttribute("file", file);
                 return "backup";
             }
         }
@@ -51,19 +54,21 @@ public class AdminController {
     }
 
     @PostMapping("/backup")
-    public String backup(HttpServletRequest request, @Valid @ModelAttribute com.project.bms.model.File file, BindingResult result) throws IOException {
+    public String backup(Model model, HttpServletRequest request, @Valid @ModelAttribute File file, BindingResult result) throws IOException {
         if (sessionService.getCookies(request) != null) {
             if (sessionService.isAdmin(request)) {
+                User user = userRepository.findById(sessionService.getUserId(request));
+                model.addAttribute("user", user);
+
                 if (file.getFilename().isEmpty()) {
-                    result.addError(new FieldError("file", "filename", "filename is required"));
+                    result.addError(new FieldError("file", "filename", "Filename is required"));
                 }
-                if (result.hasErrors()) {
-                    return "backup";
+                if (adminService.backup(file.getFilename())) {
+                    result.addError(new FieldError("file", "filename", "Backup successfully created"));
                 }
 
-                System.out.println(file.getFilename());
-                if (adminService.backup(file.getFilename())) {
-                    return "redirect:/admin";
+                if (result.hasErrors()) {
+                    return "backup";
                 }
             }
         }
