@@ -63,8 +63,15 @@ public class AdminController {
                 if (file.getFilename().isEmpty()) {
                     result.addError(new FieldError("file", "filename", "Filename is required"));
                 }
-                if (adminService.backup(file.getFilename())) {
-                    result.addError(new FieldError("file", "filename", "Backup successfully created"));
+
+                String backupFileName = adminService.backup(file.getFilename());
+
+                if (backupFileName != null) {
+                    result.addError(new FieldError("file", "filename", "Backup successful"));
+                    model.addAttribute("backupFileName", backupFileName);
+                } else {
+                    model.addAttribute("backupFileName", null);
+                    result.addError(new FieldError("file", "filename", "Backup failed"));
                 }
 
                 if (result.hasErrors()) {

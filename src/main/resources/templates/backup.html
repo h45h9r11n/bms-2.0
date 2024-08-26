@@ -55,9 +55,10 @@
     </form>
 </div>
 
-
+<div th:if="${backupFileName}">
+    <p class="text-center">
+        <a th:href="@{'/' + ${backupFileName} + '.zip'}" class="btn btn-success">Click here to download</a>
+    </p>
+</div>
 </body>
-<script>
-
-</script>
 </html>

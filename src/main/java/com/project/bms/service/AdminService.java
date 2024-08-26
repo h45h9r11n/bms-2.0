@@ -10,7 +10,7 @@ import java.util.List;
 
 @Service
 public class AdminService {
-    public boolean backup(String filename){
+    public String backup(String filename){
 
         String command = "chdir public && mkdir " + filename + " && cp -r images avatars " + filename + " && zip -r " + filename + ".zip " + filename;
         System.out.println(command);
@@ -18,10 +18,10 @@ public class AdminService {
             ProcessBuilder processBuilder = new ProcessBuilder("sh", "-c", command);
             processBuilder.redirectErrorStream(true);
             Process process = processBuilder.start();
-            return true;
+            return filename;
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return false;
+        return null;
     }
 }
