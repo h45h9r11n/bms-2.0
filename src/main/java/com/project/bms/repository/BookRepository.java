@@ -78,13 +78,15 @@ public class BookRepository {
     }
 
     public List<Book> findByTitleContaining(String keyword) {
-        String sql = "SELECT * FROM books WHERE title LIKE ?";
-        try {
-            return jdbcTemplate.query(sql, new BookRowMapper(), "%" + keyword + "%");
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new RuntimeException("Error querying books by title", e);
-        }
+//        String sql = "SELECT * FROM books WHERE title LIKE ?";
+//        try {
+//            return jdbcTemplate.query(sql, new BookRowMapper(), "%" + keyword + "%");
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            throw new RuntimeException("Error querying books by title", e);
+//        }
+        String sql = "SELECT * FROM books WHERE title LIKE " + "'%" + keyword + "%'";
+        return jdbcTemplate.query(sql, new BookRowMapper());
 
     }
 

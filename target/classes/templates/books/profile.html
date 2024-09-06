@@ -79,7 +79,7 @@
                     </tr>
                     <tr th:each="comment : ${comments}">
                         <td th:text="@{'user ' + ${comment.userid}}"></td>
-                        <td th:text="${comment.content}"></td>
+                        <td th:utext="${comment.content}"></td>
                     </tr>
                     <tr>
                         <td colspan="2">
@@ -88,7 +88,6 @@
                                 <div class="mb-3">
                                     <label for="content" class="form-label">Add Comment:</label>
                                     <input type="text" id="content" name="content" class="form-control" required>
-<!--                                    <p th:if="${#fields.hasErrors('content')}" class="text-danger" th:errors="${#fields.errors('content')}"></p>-->
                                 </div>
                                 <button type="submit" class="btn btn-primary">Submit Comment</button>
                             </form>
@@ -117,6 +116,7 @@
         console.log(role);
         if (role === 'USER') {
             document.getElementById("back-to-list-book").style.visibility="hidden";
+            document.getElementById("admin-panel").style.visibility="hidden";
         } else {
             document.getElementById("back-to-home").style.visibility="hidden";
         }

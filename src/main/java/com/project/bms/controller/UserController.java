@@ -197,7 +197,6 @@ public class UserController {
                 } else {
                     return "redirect:/users/view?id=" + id;
                 }
-
             }
         }
         return "redirect:/";
@@ -228,12 +227,14 @@ public class UserController {
             if (sessionService.isAdmin(request) || (sessionService.getUserId(request) == id)) {
                 try {
                     User user = userRepository.findById(id);
+                    model.addAttribute("user", user);
                     if (user == null) {
                         result.addError(new FieldError("user", "username", "User not found"));
                     }
                     if (result.hasErrors()) {
                         return "/users/reset";
                     }
+
                     userService.reset(id, userDTO.getPassword());
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -242,7 +243,7 @@ public class UserController {
                 if (sessionService.isAdmin(request)){
                     return "redirect:/users";
                 } else {
-                    return "redirect:/users/view";
+                    return "redirect:/users/view?id=" + id;
                 }
 
             }

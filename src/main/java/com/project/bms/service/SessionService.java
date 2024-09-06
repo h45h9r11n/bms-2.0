@@ -65,7 +65,10 @@ public class SessionService {
     public Long getUserId(HttpServletRequest request) {
         Cookie[] cookies = getCookies(request);
         String sessionId = getSessionId(cookies);
-        return sessionRepository.findBySessionId(sessionId).getUserId();
+        if (sessionId != null){
+            return sessionRepository.findBySessionId(sessionId).getUserId();
+        }
+        return null;
     }
 
     public boolean isLogged(HttpServletRequest request) {
@@ -73,7 +76,9 @@ public class SessionService {
         if (cookies != null) {
             for (Cookie cookie : cookies) {
                 if (cookie.getName().equals("SESSIONID")) {
-                    return true;
+                    if (findBySessionId(cookie.getValue()) != null) {
+                        return true;
+                    }
                 }
             }
         }
@@ -110,7 +115,9 @@ public class SessionService {
         if (isLogged(request)) {
             String sessionId = getSessionId(getCookies(request));
             Session session = findBySessionId(sessionId);
-            return isExpired(session);
+            if (session != null){
+                return isExpired(session);
+            }
         }
         return false;
     }

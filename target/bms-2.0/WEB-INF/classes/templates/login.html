@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>Login</title>
+  <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+  <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+  <link rel="stylesheet" href="/css/style.css">
+
+</head>
+<body>
+    <section>
+        <form id="loginForm" action="/login" method="post">
+            <h1>Login</h1>
+
+            <div class="inputbox">
+                <ion-icon name="username-outline"></ion-icon>
+                <input id="username" type="text" name="username" required>
+                <label for="">Username</label>
+            </div>
+            <div class="inputbox">
+                <ion-icon name="lock-closed-outline"></ion-icon>
+                <input id="password" type="password" name="password" required>
+                <label for="">Password</label>
+            </div>
+            <div class="register">
+                <p><a href="#">Forget Password ?</a></p>
+            </div>
+            <button id="submit" type="submit">Log in</button>
+            <div class="register">
+                <p>Don't have a account ?<a href="/signup"> Register!!</a></p>
+            </div>
+        </form>
+    </section>
+</body>
+
+<script>
+    document.getElementById('loginForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+
+        const data = { username, password };
+        const jsonData = JSON.stringify(data);
+
+        fetch('/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: jsonData
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.redirectUrl) {
+                    window.location.href = data.redirectUrl;
+                } else {
+                    throw new Error('Redirection URL not found in response');
+                }
+            })
+            .catch(error => {
+                alert(error.message);
+                console.error('Error:', error);
+            });
+    });
+</script>

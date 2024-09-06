@@ -47,6 +47,9 @@ public class BookController {
     @GetMapping({"", "/"})
     public String showBooks(HttpServletRequest request, Model model) {
         if (sessionService.getCookies(request) != null) {
+            if (sessionService.isSessionExpired(request)){
+                return "redirect:/";
+            }
             if (sessionService.isAdmin(request)) {
                 User user = userRepository.findById(sessionService.getUserId(request));
                 model.addAttribute("user", user);
@@ -217,8 +220,9 @@ public class BookController {
                     }
 
                     if (!bookDTO.getImage().isEmpty()) {
-                        String uploadDir = "public/images/";
-                        Path oldImagePath = Paths.get(uploadDir + bookDTO.getImage());
+                        String uploadDir = "./public/images/";
+                        Path oldImagePath = Paths.get(uploadDir + book.getImage());
+//                        System.out.println(oldImagePath);
                         try {
                             Files.delete(oldImagePath);
                         } catch (Exception e) {

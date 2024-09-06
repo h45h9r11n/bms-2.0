@@ -73,14 +73,14 @@ public class AuthController {
             Cookie sessionCookie = new Cookie("SESSIONID", session.getSessionId());
             sessionCookie.setMaxAge(60 * 60);
             sessionCookie.setPath("/");
-            sessionCookie.setHttpOnly(true);
+//            sessionCookie.setHttpOnly(true);
             response.addCookie(sessionCookie);
 
             String role = userRepository.findByUsername(user.getUsername()).getRole();
             Cookie roleCookie = new Cookie("ROLE", role);
             roleCookie.setMaxAge(60 * 60);
             roleCookie.setPath("/");
-            roleCookie.setHttpOnly(false);
+//            roleCookie.setHttpOnly(true);
             response.addCookie(roleCookie);
 
             String redirectUrl = "/users/home"; //
